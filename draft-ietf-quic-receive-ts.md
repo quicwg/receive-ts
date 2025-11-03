@@ -35,8 +35,7 @@ informative:
   MULTIPATH: I-D.ietf-quic-multipath
 
   RRBNC:
-    title: "pathChirp: Efficient Available Bandwidth Estimation for Network
-Paths"
+    title: "pathChirp: Efficient Available Bandwidth Estimation for Network Paths"
     date: 2003
     author:
       name: "Ribeiro, V., Riedi, R., Baraniuk, R., Navratil, J., and L. Cottrel"
