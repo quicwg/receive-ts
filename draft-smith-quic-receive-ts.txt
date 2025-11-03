@@ -18,17 +18,6 @@ Abstract
    which supports reporting multiple packet receive timestamps for post-
    handshake packets.
 
-Discussion Venues
-
-   This note is to be removed before publishing as an RFC.
-
-   Discussion of this document takes place on the QUIC Working Group
-   mailing list (quic@ietf.org), which is archived at
-   https://mailarchive.ietf.org/arch/browse/quic/.
-
-   Source for this draft and an issue tracker can be found at
-   https://github.com/wcsmith/draft-quic-receive-ts.
-
 Status of This Memo
 
    This Internet-Draft is submitted in full conformance with the
