@@ -1,12 +1,11 @@
 # QUIC Extension for Reporting Packet Receive Timestamps
 
-This is the working area for the individual Internet-Draft, "QUIC Extension for Reporting Packet Receive Timestamps".
+This is the working area for the QUIC Working Group Internet-Draft, "QUIC Extension for Reporting Packet Receive Timestamps".
 
-* [Editor's Copy](https://wcsmith.github.io/draft-quic-receive-ts/#go.draft-smith-quic-receive-ts.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-smith-quic-receive-ts)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-smith-quic-receive-ts)
-* [Compare Editor's Copy to Individual Draft](https://wcsmith.github.io/draft-quic-receive-ts/#go.draft-smith-quic-receive-ts.diff)
-
+* [Editor's Copy](https://quicwg.github.io/receive-ts/#go.draft-ietf-quic-receive-ts.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-ietf-quic-receive-ts)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-ietf-quic-receive-ts)
+* [Compare Editor's Copy to Individual Draft](https://quicwg.github.io/receive-ts/#go.draft-ietf-quic-receive-ts.diff)
 
 ## Contributing
 
