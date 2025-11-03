@@ -1,7 +1,7 @@
 ---
 title: "QUIC Extended Acknowledgement for Reporting Packet Receive Timestamps"
 abbrev: "QUIC Receive Timestamps"
-docname: draft-smith-quic-receive-ts-latest
+docname: draft-ietf-quic-receive-ts-latest
 category: info
 
 ipr: trust200902
