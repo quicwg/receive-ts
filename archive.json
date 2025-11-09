@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-11-04T01:45:24.150441+00:00",
+  "timestamp": "2025-11-09T01:49:14.921616+00:00",
   "repo": "quicwg/receive-ts",
   "labels": [
     {
@@ -249,7 +249,7 @@
       "labels": [],
       "body": "#17 proposes an approach for how the extensions might exist, but it might not be specific enough and/or handle all the cases we want.\n\nThis is a placeholder issue to ensure the WG has a more complete conversation about this question once the draft it adopted.",
       "createdAt": "2025-05-21T17:16:05Z",
-      "updatedAt": "2025-07-24T17:33:13Z",
+      "updatedAt": "2025-11-06T21:12:44Z",
       "closedAt": null,
       "comments": [
         {
@@ -258,6 +258,27 @@
           "body": "Most of the feedback at today's session was around saying less and not specifying anything like RFC# as an approach.",
           "createdAt": "2025-07-24T17:33:13Z",
           "updatedAt": "2025-07-24T17:33:13Z"
+        },
+        {
+          "author": "kazuho",
+          "authorAssociation": "MEMBER",
+          "body": "I do not have a strong preference, but I would refer the two extensions (i.e., multipath and receive-ts) use the same approach.\n\nAt the moment, the multipath drafts adds the path_id field and uses a new frame ID. The receive-ts draft appends the timestamp fields but reuses the existing codepoint. Note both drafts use these modified frames only in 1-RTT packets.\n\n\nThis seems inconsistent to me.\n\nI would prefer using one approach: i.e., either (1) use different frame ID for each extension (or combination of extensions), or (2) use the same frame ID (0x02, 0x03) and alter the ACK frame format used in 1-RTT packets based on the extension being negotiated.",
+          "createdAt": "2025-11-06T15:03:45Z",
+          "updatedAt": "2025-11-06T15:03:45Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I didn't fully understand the motivation for why MP-QUIC didn't make the Path ID required on all 1RTT ACKs, avoiding the need for new codepoints, but by the time I thought about that seriously, MP-QUIC was very far along and I didn't feel like I should be proposing changes.",
+          "createdAt": "2025-11-06T15:17:58Z",
+          "updatedAt": "2025-11-06T15:17:58Z"
+        },
+        {
+          "author": "kazuho",
+          "authorAssociation": "MEMBER",
+          "body": "FWIW, reading https://github.com/quicwg/multipath/issues/220, it seems we did not consider changing the format of ACK frame itself in 1-RTT, even though we considered forbidding use of ACK in 1-RTT.",
+          "createdAt": "2025-11-06T21:12:43Z",
+          "updatedAt": "2025-11-06T21:12:43Z"
         }
       ]
     },
