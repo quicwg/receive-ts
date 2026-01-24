@@ -35,7 +35,8 @@ informative:
   MULTIPATH: I-D.ietf-quic-multipath
 
   RRBNC:
-    title: "pathChirp: Efficient Available Bandwidth Estimation for Network Paths"
+    title: "pathChirp: Efficient Available Bandwidth Estimation for Network
+Paths"
     date: 2003
     author:
       name: "Ribeiro, V., Riedi, R., Baraniuk, R., Navratil, J., and L. Cottrel"
@@ -68,7 +69,7 @@ the potential to improve the accuracy of network bandwidth measurements and the
 effectiveness of congestion control, especially for latency-critical
 applications such as real-time video conferencing or game streaming.
 
-Numerous existing algorithms and techniques leverage receive receive timestamps
+Numerous existing algorithms and techniques leverage receive timestamps
 to improve transport performance. Examples include:
 
 - The WebRTC congestion control algorithm described in {{?I-D.ietf-rmcat-gcc}}
@@ -88,28 +89,30 @@ if they are not used by the congestion controller.
 
 {::boilerplate bcp14-tagged}
 
-# ACK Frame Wire Format {#frame}
+# New ACK_RECEIVE_TIMESTAMPS Frame Wire Format {#frame}
 
-Endpoints send ACK frames in 1-RTT packets as they otherwise would, with 0
-or more receive timestamps following the Ack Ranges and optional ECN Counts.
-Receive timestamps MUST NOT be sent in Initial or Handshake packets, because
-the peer would not know to use the extended wire format. ACK frames are never
-sent in 0-RTT packets, so there is no change to 0-RTT.
+Once the receive timestamps extension is negotiated (see {{negotiation}}), an
+endpoint MAY use the ACK_RECEIVE_TIMESTAMPS frame defined below to report
+receive timestamps to its peer. An endpoint MAY continue to use the existing
+ACK frames as specified in {{Section 19.3 of !RFC9000}} if it does not have any
+receive timestamps or does not want to report them.
 
-Once negotiated, the ACK format is identical to RFC9000, but with an
-additional section for receive timestamps at the end:
+Endpoints send ACK_RECEIVE_TIMESTAMPS frames in 1-RTT packets, with 0
+or more receive timestamps following the Ack Ranges and ECN Counts. Unlike the
+ACK frame types (x02..0x03), the ACK_RECEIVE_TIMESTAMPS frame defines one frame
+type (TBD) which always includes ECN counts. ACK frames are never sent in 0-RTT
+packets, so the same applies to ACK_RECEIVE_TIMESTAMPS frames.
 
 ~~~
-ACK Frame {
-  Type (i) = 0x02..0x03,
+ACK_RECEIVE_TIMESTAMPS Frame {
+  Type (i) = TBD,
   Largest Acknowledged (i),
   ACK Delay (i),
   ACK Range Count (i),
   First ACK Range (i),
   ACK Range (..) ...,
-  [ECN Counts (..)],
-  // Timestamp Extension, see {{ts-ranges}}
-  Receive Timestamps (..)
+  ECN Counts (..),
+  Receive Timestamps (..) //see {{ts-ranges}}
 }
 ~~~
 {: #fig-frame title="ACK Frame Format"}
@@ -219,15 +222,6 @@ receive_timestamps_exponent (0xff0a003 temporary value for draft use):
   decoding timestamp delta fields in ACK frames sent by the
   peer (see {{ts-ranges}}). If this value is absent, a default value of 0 is
   assumed (indicating microsecond precision). Values above 20 are invalid.
-
-## Multiple Extensions to the ACK Frame
-
-Multiple extensions can alter the ACK Frame or define new codepoints for
-variations on the ACK frame, such as {{?MULTIPATH}}.  Each extension defines
-how it co-exists with past extensions.  If multiple extensions add more
-information to the ACK Frame, as this receive timestamp extension does,
-the additional extensions are appended at the end of the ACK Frame in the
-order of their RFC number, unless otherwise specified.
 
 ## Receive Timestamp Basis {#ts-basis}
 
