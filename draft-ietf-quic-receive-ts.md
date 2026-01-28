@@ -98,21 +98,22 @@ ACK frames as specified in {{Section 19.3 of !RFC9000}} if it does not have any
 receive timestamps or does not want to report them.
 
 Endpoints send ACK_RECEIVE_TIMESTAMPS frames in 1-RTT packets, with 0
-or more receive timestamps following the Ack Ranges and ECN Counts. Unlike the
-ACK frame types (x02..0x03), the ACK_RECEIVE_TIMESTAMPS frame defines one frame
-type (TBD) which always includes ECN counts. ACK frames are never sent in 0-RTT
-packets, so the same applies to ACK_RECEIVE_TIMESTAMPS frames.
+or more receive timestamps following the Ack Ranges and optional ECN Counts.
+Similarto to the ACK frame types (x02..0x03), the ACK_RECEIVE_TIMESTAMPS
+frame defines two frame types (TBD1..TBD2) to determine whether the frame
+includes ECN counts. ACK frames are never sent in 0-RTT packets, so the same
+applies to ACK_RECEIVE_TIMESTAMPS frames.
 
 ~~~
 ACK_RECEIVE_TIMESTAMPS Frame {
-  Type (i) = TBD,
+  Type (i) = TBD1..TBD2,
   Largest Acknowledged (i),
   ACK Delay (i),
   ACK Range Count (i),
   First ACK Range (i),
   ACK Range (..) ...,
-  ECN Counts (..),
-  Receive Timestamps (..) //see {{ts-ranges}}
+  [ECN Counts (..)],       // included iff Type == TBD2
+  Receive Timestamps (..)  // see {{ts-ranges}}
 }
 ~~~
 {: #fig-frame title="ACK Frame Format"}
