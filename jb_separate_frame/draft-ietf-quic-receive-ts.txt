@@ -5,8 +5,8 @@
 QUIC                                                       I. Swett, Ed.
 Internet-Draft                                                Google LLC
 Intended status: Standards Track                          J. Beshay, Ed.
-Expires: 28 July 2026                               Meta Platforms, Inc.
-                                                         24 January 2026
+Expires: 2 August 2026                              Meta Platforms, Inc.
+                                                         29 January 2026
 
 
  QUIC Extended Acknowledgement for Reporting Packet Receive Timestamps
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 28 July 2026.
+   This Internet-Draft will expire on 2 August 2026.
 
 Copyright Notice
 
@@ -122,21 +122,22 @@ Table of Contents
    them.
 
    Endpoints send ACK_RECEIVE_TIMESTAMPS frames in 1-RTT packets, with 0
-   or more receive timestamps following the Ack Ranges and ECN Counts.
-   Unlike the ACK frame types (x02..0x03), the ACK_RECEIVE_TIMESTAMPS
-   frame defines one frame type (TBD) which always includes ECN counts.
-   ACK frames are never sent in 0-RTT packets, so the same applies to
+   or more receive timestamps following the Ack Ranges and optional ECN
+   Counts.  Similar to to the ACK frame types (x02..0x03), the
+   ACK_RECEIVE_TIMESTAMPS frame defines two frame types (TBD1..TBD2) to
+   determine whether the frame includes ECN counts.  ACK frames are
+   never sent in 0-RTT packets, so the same applies to
    ACK_RECEIVE_TIMESTAMPS frames.
 
    ACK_RECEIVE_TIMESTAMPS Frame {
-     Type (i) = TBD,
+     Type (i) = TBD1..TBD2,
      Largest Acknowledged (i),
      ACK Delay (i),
      ACK Range Count (i),
      First ACK Range (i),
      ACK Range (..) ...,
-     ECN Counts (..),
-     Receive Timestamps (..) //see {{ts-ranges}}
+     [ECN Counts (..)],       // included iff Type == TBD2
+     Receive Timestamps (..)  // see {{ts-ranges}}
    }
 
                          Figure 1: ACK Frame Format
@@ -170,7 +171,10 @@ Table of Contents
    receive timestamps for each contiguous packet in the Timestamp Range
    (descending).  Packets within a range are in descending packet number
    and timestamp order.  Ranges are in descending timestamp order but do
-   not have to be in descending packet number order.
+   not have to be in descending packet number order.  Each packet in a
+   range MUST be an acknowledged packet, i.e., the packet number MUST
+   have been included in an ACK Range in the current or a previously
+   sent ACK or ACK_RECEIVE_TIMESTAMPS frame.
 
    Timestamp Ranges are structured as shown in Figure 3.
 
