@@ -99,10 +99,11 @@ receive timestamps or does not want to report them.
 
 Endpoints send ACK_RECEIVE_TIMESTAMPS frames in 1-RTT packets, with 0
 or more receive timestamps following the Ack Ranges and optional ECN Counts.
-Similarto to the ACK frame types (x02..0x03), the ACK_RECEIVE_TIMESTAMPS
+Similar to to the ACK frame types (x02..0x03), the ACK_RECEIVE_TIMESTAMPS
 frame defines two frame types (TBD1..TBD2) to determine whether the frame
-includes ECN counts. ACK frames are never sent in 0-RTT packets, so the same
-applies to ACK_RECEIVE_TIMESTAMPS frames.
+includes ECN counts.
+ACK frames are never sent in 0-RTT packets, so the same applies to
+ACK_RECEIVE_TIMESTAMPS frames.
 
 ~~~
 ACK_RECEIVE_TIMESTAMPS Frame {
@@ -153,7 +154,10 @@ largest packet number in the range, followed by a list of Timestamp Deltas
 describing the relative receive timestamps for each contiguous packet in the
 Timestamp Range (descending). Packets within a range are in descending
 packet number and timestamp order. Ranges are in descending timestamp order
-but do not have to be in descending packet number order.
+but do not have to be in descending packet number order. Each packet in
+a range MUST be an acknowledged packet, i.e., the packet number
+MUST have been included in an ACK Range in the current or a previously sent
+ACK or ACK_RECEIVE_TIMESTAMPS frame.
 
 Timestamp Ranges are structured as shown in {{fig-ts-range}}.
 
