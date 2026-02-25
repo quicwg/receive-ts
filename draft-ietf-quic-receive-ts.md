@@ -253,9 +253,14 @@ acknowledged packets. Examples of such scenarios are:
 
 - A packet containing an ACK frame is lost.
 
-- The sender truncates the number of timestamps sent in order to (a) avoid
+- The receiver truncates the number of timestamps sent in order to (a) avoid
   sending more than max_receive_timestamps_per_ack ({{negotiation}}); or (b) fit
   the ACK frame into a packet.
+
+- The receiver is unable to measure the arrival timestamp of a packet with
+  sufficient accuracy, for example due to a scheduling delay in a userspace
+  implementation, and omits the packet from the Timestamp Ranges while still
+  acknowledging it in the ACK Ranges.
 
 # Examples {#examples}
 
