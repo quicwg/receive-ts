@@ -271,8 +271,8 @@ Table of Contents
 
    *  A packet containing an ACK frame is lost.
 
-   *  The sender truncates the number of timestamps sent in order to (a)
-      avoid sending more than max_receive_timestamps_per_ack
+   *  The receiver truncates the number of timestamps sent in order to
+      (a) avoid sending more than max_receive_timestamps_per_ack
       (Section 5); or (b) fit the ACK frame into a packet.
 
    *  The receiver is unable to measure the arrival timestamp of a
