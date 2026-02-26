@@ -211,6 +211,10 @@ other packets in a single ACK frame, starting with the most recently received
 packet regardless of the packet number order. See {{examples}} for examples of
 reporting timestamps of out-of-order packets.
 
+When truncation is necessary to fit within the max_receive_timestamps_per_ack
+limit or reduce the size of the frame, the receiver SHOULD retain timestamps
+for the most recently received packets and omit timestamps for older packets.
+
 # Extension Negotiation {#negotiation}
 
 max_receive_timestamps_per_ack (0xff0a002 temporary value for draft use):
