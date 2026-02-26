@@ -60,6 +60,7 @@ Table of Contents
      5.1.  Receive Timestamp Basis
    6.  Discussion
      6.1.  Best-Effort Behavior
+     6.2.  Frame Size
    7.  Examples
    8.  Security Considerations
    9.  IANA Considerations
@@ -279,6 +280,15 @@ Table of Contents
       packet with sufficient accuracy, for example due to a scheduling
       delay in a userspace implementation, and omits the packet from the
       Timestamp Ranges while still acknowledging it in the ACK Ranges.
+
+6.2.  Frame Size
+
+   The addition of receive timestamps increases the size of ACK frames.
+   Receivers SHOULD use receive timestamps to fill available space in
+   packets that would already be sent, rather than sending additional
+   packets solely to report timestamps.  In such cases, the receiver
+   would send fewer timestamps than the maximum allowed by
+   max_receive_timestamps_per_ack.
 
 7.  Examples
 

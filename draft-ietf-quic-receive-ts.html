@@ -1170,6 +1170,9 @@ reporting multiple packet receive timestamps for post-handshake packets.<a href=
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
                 <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-best-effort-behavior" class="internal xref">Best-Effort Behavior</a></p>
 </li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-frame-size" class="internal xref">Frame Size</a></p>
+</li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
@@ -1470,6 +1473,18 @@ implementation, and omits the packet from the Timestamp Ranges while still
 acknowledging it in the ACK Ranges.<a href="#section-6.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
+</section>
+</div>
+<div id="frame-size">
+<section id="section-6.2">
+        <h3 id="name-frame-size">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-frame-size" class="section-name selfRef">Frame Size</a>
+        </h3>
+<p id="section-6.2-1">The addition of receive timestamps increases the size of ACK frames. Receivers
+<span class="bcp14">SHOULD</span> use receive timestamps to fill available space in packets that would
+already be sent, rather than sending additional packets solely to report
+timestamps. In such cases, the receiver would send fewer timestamps than the
+maximum allowed by max_receive_timestamps_per_ack.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
