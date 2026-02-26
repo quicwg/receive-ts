@@ -1462,9 +1462,15 @@ acknowledged packets. Examples of such scenarios are:<a href="#section-6.1-1" cl
             <p id="section-6.1-2.1.1">A packet containing an ACK frame is lost.<a href="#section-6.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.1-2.2">
-            <p id="section-6.1-2.2.1">The sender truncates the number of timestamps sent in order to (a) avoid
+            <p id="section-6.1-2.2.1">The receiver truncates the number of timestamps sent in order to (a) avoid
 sending more than max_receive_timestamps_per_ack (<a href="#negotiation" class="auto internal xref">Section 5</a>); or (b) fit
 the ACK frame into a packet.<a href="#section-6.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.1-2.3">
+            <p id="section-6.1-2.3.1">The receiver is unable to measure the arrival timestamp of a packet with
+sufficient accuracy, for example due to a scheduling delay in a userspace
+implementation, and omits the packet from the Timestamp Ranges while still
+acknowledging it in the ACK Ranges.<a href="#section-6.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
