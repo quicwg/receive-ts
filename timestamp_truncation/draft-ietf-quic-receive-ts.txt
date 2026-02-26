@@ -229,9 +229,9 @@ Table of Contents
    packets.
 
    When truncation is necessary to fit within the
-   max_receive_timestamps_per_ack limit, the receiver SHOULD retain
-   timestamps for the most recently received packets and omit timestamps
-   for older packets.
+   max_receive_timestamps_per_ack limit or reduce the size of the frame,
+   the receiver SHOULD retain timestamps for the most recently received
+   packets and omit timestamps for older packets.
 
 5.  Extension Negotiation
 
