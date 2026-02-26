@@ -30,9 +30,9 @@ author:
 
 normative:
 
-informative:
-
   MULTIPATH: I-D.ietf-quic-multipath
+
+informative:
 
   RRBNC:
     title: "pathChirp: Efficient Available Bandwidth Estimation for Network Paths"
@@ -157,7 +157,8 @@ but do not have to be in descending packet number order.
 
 Each packet in a range MUST be an acknowledged packet,
 i.e., the packet number MUST have been included in an ACK Range
-in the current or a previously sent ACK or ACK_RECEIVE_TIMESTAMPS frame.
+in the current or a previously sent ACK, ACK_RECEIVE_TIMESTAMPS, PATH_ACK,
+or PATH_ACK_RECEIVE_TIMESTAMPS frame.
 
 Timestamp Ranges are structured as shown in {{fig-ts-range}}.
 
@@ -204,12 +205,56 @@ Timestamp Deltas:
 
   All Timestamp Delta values are decoded by mulitplying the value in the field
   by 2 to the power of the receive_timestamps_exponent transport parameter
-  received by the sender of the ACK frame (see {{negotiation}}):
+  received by the sender of the frame (see {{negotiation}}):
 
 When the receiver receives packets out-of-order, it SHOULD report them with
-other packets in a single ACK frame, starting with the most recently received
-packet regardless of the packet number order. See {{examples}} for examples of
-reporting timestamps of out-of-order packets.
+other packets in a single ACK_RECEIVE_TIMESTAMPS or PATH_ACK_RECEIVE_TIMESTAMPS
+frame, starting with the most recently received packet regardless of the packet
+number order. See {{examples}} for examples of reporting timestamps of
+out-of-order packets.
+
+# PATH_ACK_RECEIVE_TIMESTAMPS Frame Wire Format {#mp-frame}
+
+When both the receive timestamps extension and the multipath extension
+{{MULTIPATH}} are negotiated, an endpoint MAY use the
+PATH_ACK_RECEIVE_TIMESTAMPS frame defined below to report receive timestamps
+for packets received on a specific path. An endpoint MAY continue to use the
+existing PATH_ACK frames as specified in {{Section 4.1 of MULTIPATH}} if it
+does not have any receive timestamps or does not want to report them.
+
+Endpoints send PATH_ACK_RECEIVE_TIMESTAMPS frames in 1-RTT packets, with 0
+or more receive timestamps following the Ack Ranges and optional ECN Counts.
+Similar to the PATH_ACK frame types (0x3e..0x3f), the
+PATH_ACK_RECEIVE_TIMESTAMPS frame defines two frame types (TBD3..TBD4) to
+indicate whether the frame includes ECN counts.
+
+~~~
+PATH_ACK_RECEIVE_TIMESTAMPS Frame {
+  Type (i) = TBD3..TBD4,
+  Path Identifier (i),
+  Largest Acknowledged (i),
+  ACK Delay (i),
+  ACK Range Count (i),
+  First ACK Range (i),
+  ACK Range (..) ...,
+  [ECN Counts (..)],       // included iff Type == TBD4
+  Receive Timestamps (..)  // see {{ts-ranges}}
+}
+~~~
+{: #fig-mp-frame title="PATH_ACK_RECEIVE_TIMESTAMPS Frame Format"}
+
+Compared to the ACK_RECEIVE_TIMESTAMPS frame defined in {{frame}}, the
+following field is added:
+
+Path Identifier:
+
+: The path ID associated with the packet number space of the 1-RTT packets
+  which are acknowledged by this frame, as specified in
+  {{Section 4.1 of MULTIPATH}}.
+
+All other fields are the same as for the ACK_RECEIVE_TIMESTAMPS frame
+({{frame}}). The Receive Timestamps field follows the same format described
+in {{ts-ranges}}.
 
 When truncation is necessary to fit within the max_receive_timestamps_per_ack
 limit or reduce the size of the frame, the receiver SHOULD retain timestamps
@@ -220,15 +265,17 @@ for the most recently received packets and omit timestamps for older packets.
 max_receive_timestamps_per_ack (0xff0a002 temporary value for draft use):
 
 : A variable-length integer indicating that the maximum number of receive
-  timestamps the sending endpoint would like to receive in an ACK frame.
+  timestamps the sending endpoint would like to receive in an
+  ACK_RECEIVE_TIMESTAMPS or PATH_ACK_RECEIVE_TIMESTAMPS frame.
 
-  Each ACK frame sent MUST NOT contain more than the peer's maximum
-  number of receive timestamps.
+  Each ACK_RECEIVE_TIMESTAMPS or PATH_ACK_RECEIVE_TIMESTAMPS frame sent MUST
+  NOT contain more than the peer's maximum number of receive timestamps.
 
 receive_timestamps_exponent (0xff0a003 temporary value for draft use):
 
 : A variable-length integer indicating the exponent to be used when encoding and
-  decoding timestamp delta fields in ACK frames sent by the
+  decoding timestamp delta fields in ACK_RECEIVE_TIMESTAMPS and
+  PATH_ACK_RECEIVE_TIMESTAMPS frames sent by the
   peer (see {{ts-ranges}}). If this value is absent, a default value of 0 is
   assumed (indicating microsecond precision). Values above 20 are invalid.
 
@@ -255,11 +302,12 @@ Receive timestamps are sent on a best-effort basis. Endpoints MUST gracefully
 handle scenarios where the receiver does not communicate receive timestamps for
 acknowledged packets. Examples of such scenarios are:
 
-- A packet containing an ACK frame is lost.
+- A packet containing an ACK_RECEIVE_TIMESTAMPS or PATH_ACK_RECEIVE_TIMESTAMPS
+  frame is lost.
 
 - The receiver truncates the number of timestamps sent in order to (a) avoid
   sending more than max_receive_timestamps_per_ack ({{negotiation}}); or (b) fit
-  the ACK frame into a packet.
+  the ACK_RECEIVE_TIMESTAMPS or PATH_ACK_RECEIVE_TIMESTAMPS frame into a packet.
 
 - The receiver is unable to measure the arrival timestamp of a packet with
   sufficient accuracy, for example due to a scheduling delay in a userspace
