@@ -262,6 +262,14 @@ acknowledged packets. Examples of such scenarios are:
   implementation, and omits the packet from the Timestamp Ranges while still
   acknowledging it in the ACK Ranges.
 
+## Frame Size
+
+The addition of receive timestamps increases the size of ACK frames. Receivers
+SHOULD use receive timestamps to fill available space in packets that would
+already be sent, rather than sending additional packets solely to report
+timestamps. In such cases, the receiver would send fewer timestamps than the
+maximum allowed by max_receive_timestamps_per_ack.
+
 # Examples {#examples}
 
 To illustrate the usage of the Receive Timestamps fields, consider a peer
