@@ -229,6 +229,11 @@ Table of Contents
    Section 7 for examples of reporting timestamps of out-of-order
    packets.
 
+   When truncation is necessary to fit within the
+   max_receive_timestamps_per_ack limit or reduce the size of the frame,
+   the receiver SHOULD retain timestamps for the most recently received
+   packets and omit timestamps for older packets.
+
 5.  Extension Negotiation
 
    max_receive_timestamps_per_ack (0xff0a002 temporary value for
