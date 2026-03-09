@@ -99,20 +99,20 @@ receive timestamps or does not want to report them.
 Endpoints send ACK_RECEIVE_TIMESTAMPS frames in 1-RTT packets, with 0
 or more receive timestamps following the Ack Ranges and optional ECN Counts.
 Similar to to the ACK frame types (x02..0x03), the ACK_RECEIVE_TIMESTAMPS
-frame defines two frame types (0x38..0x39) to indicate whether the frame
+frame defines two frame types (0x03178307..0x03178308) to indicate whether the frame
 includes ECN counts.
 ACK frames are never sent in 0-RTT packets, so the same applies to
 ACK_RECEIVE_TIMESTAMPS frames.
 
 ~~~
 ACK_RECEIVE_TIMESTAMPS Frame {
-  Type (i) = 0x38..0x39,
+  Type (i) = 0x03178307..0x03178308,
   Largest Acknowledged (i),
   ACK Delay (i),
   ACK Range Count (i),
   First ACK Range (i),
   ACK Range (..) ...,
-  [ECN Counts (..)],       // included iff Type == 0x39
+  [ECN Counts (..)],       // included iff Type == 0x03178308
   Receive Timestamps (..)  // see {{ts-ranges}}
 }
 ~~~
@@ -225,19 +225,19 @@ does not have any receive timestamps or does not want to report them.
 Endpoints send PATH_ACK_RECEIVE_TIMESTAMPS frames in 1-RTT packets, with 0
 or more receive timestamps following the Ack Ranges and optional ECN Counts.
 Similar to the PATH_ACK frame types (0x3e..0x3f), the
-PATH_ACK_RECEIVE_TIMESTAMPS frame defines two frame types (0x3a..0x3b) to
+PATH_ACK_RECEIVE_TIMESTAMPS frame defines two frame types (0x03178309..0x0317830a) to
 indicate whether the frame includes ECN counts.
 
 ~~~
 PATH_ACK_RECEIVE_TIMESTAMPS Frame {
-  Type (i) = 0x3a..0x3b,
+  Type (i) = 0x03178309..0x0317830a,
   Path Identifier (i),
   Largest Acknowledged (i),
   ACK Delay (i),
   ACK Range Count (i),
   First ACK Range (i),
   ACK Range (..) ...,
-  [ECN Counts (..)],       // included iff Type == 0x3b
+  [ECN Counts (..)],       // included iff Type == 0x0317830a
   Receive Timestamps (..)  // see {{ts-ranges}}
 }
 ~~~
