@@ -278,7 +278,7 @@ receive_timestamps_exponent (0x4ac26 temporary value for draft use):
   PATH_ACK_RECEIVE_TIMESTAMPS frames sent by the
   peer (see {{ts-ranges}}). If this value is absent, a default value of 0 is
   assumed (indicating microsecond precision). Values above 20 are invalid.
-  If receive_timestamps_exponent transport parameter is present and
+  If the receive_timestamps_exponent transport parameter is present and
   max_receive_timestamps_per_ack is not, receive timestamps are not supported
   and receive_timestamps_exponent MUST be ignored.
 
