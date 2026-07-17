@@ -5,8 +5,8 @@
 QUIC                                                       I. Swett, Ed.
 Internet-Draft                                                Google LLC
 Intended status: Standards Track                          J. Beshay, Ed.
-Expires: 11 September 2026                          Meta Platforms, Inc.
-                                                           10 March 2026
+Expires: 18 January 2027                            Meta Platforms, Inc.
+                                                            17 July 2026
 
 
  QUIC Extended Acknowledgement for Reporting Packet Receive Timestamps
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 11 September 2026.
+   This Internet-Draft will expire on 18 January 2027.
 
 Copyright Notice
 
@@ -284,10 +284,21 @@ Table of Contents
    use):  A variable-length integer indicating that the maximum number
       of receive timestamps the sending endpoint would like to receive
       in an ACK_RECEIVE_TIMESTAMPS or PATH_ACK_RECEIVE_TIMESTAMPS frame.
+      If this transport parameter is absent, a default value of 0 is
+      assumed.
 
       Each ACK_RECEIVE_TIMESTAMPS or PATH_ACK_RECEIVE_TIMESTAMPS frame
       sent MUST NOT contain more than the peer's maximum number of
       receive timestamps.
+
+      An endpoint MUST NOT send ACK_RECEIVE_TIMESTAMPS or
+      PATH_ACK_RECEIVE_TIMESTAMPS frames to a peer whose
+      max_receive_timestamps_per_ack is 0.  This includes the case where
+      the transport parameter is absent and the default value of 0 is
+      assumed, which indicates the peer does not support receive
+      timestamps and the extension is not negotiated for that direction.
+      A value of 0 does not permit sending these frames with zero
+      timestamps; it prohibits sending them entirely.
 
    receive_timestamps_exponent (0x4ac26 temporary value for draft
    use):  A variable-length integer indicating the exponent to be used
@@ -295,7 +306,10 @@ Table of Contents
       ACK_RECEIVE_TIMESTAMPS and PATH_ACK_RECEIVE_TIMESTAMPS frames sent
       by the peer (see Section 4.1).  If this value is absent, a default
       value of 0 is assumed (indicating microsecond precision).  Values
-      above 20 are invalid.
+      above 20 are invalid.  If the receive_timestamps_exponent
+      transport parameter is present and max_receive_timestamps_per_ack
+      is absent or has a value of 0, receive timestamps are not
+      supported and receive_timestamps_exponent MUST be ignored.
 
 6.1.  Receive Timestamp Basis
 
@@ -460,9 +474,9 @@ Table of Contents
               Liu, Y., Ma, Y., De Coninck, Q., Bonaventure, O., Huitema,
               C., and M. Kühlewind, "Managing multiple paths for a QUIC
               connection", Work in Progress, Internet-Draft, draft-ietf-
-              quic-multipath-20, 20 February 2026,
+              quic-multipath-21, 17 March 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-quic-
-              multipath-20>.
+              multipath-21>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
