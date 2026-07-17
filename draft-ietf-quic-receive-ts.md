@@ -267,9 +267,18 @@ max_receive_timestamps_per_ack (0x4ac07 temporary value for draft use):
 : A variable-length integer indicating that the maximum number of receive
   timestamps the sending endpoint would like to receive in an
   ACK_RECEIVE_TIMESTAMPS or PATH_ACK_RECEIVE_TIMESTAMPS frame.
+  If this transport parameter is absent, a default value of 0 is assumed.
 
   Each ACK_RECEIVE_TIMESTAMPS or PATH_ACK_RECEIVE_TIMESTAMPS frame sent MUST
   NOT contain more than the peer's maximum number of receive timestamps.
+
+  An endpoint MUST NOT send ACK_RECEIVE_TIMESTAMPS or
+  PATH_ACK_RECEIVE_TIMESTAMPS frames to a peer whose
+  max_receive_timestamps_per_ack is 0. This includes the case where the
+  transport parameter is absent and the default value of 0 is assumed, which
+  indicates the peer does not support receive timestamps and the extension is
+  not negotiated for that direction. A value of 0 does not permit sending these
+  frames with zero timestamps; it prohibits sending them entirely.
 
 receive_timestamps_exponent (0x4ac26 temporary value for draft use):
 
@@ -279,8 +288,8 @@ receive_timestamps_exponent (0x4ac26 temporary value for draft use):
   peer (see {{ts-ranges}}). If this value is absent, a default value of 0 is
   assumed (indicating microsecond precision). Values above 20 are invalid.
   If the receive_timestamps_exponent transport parameter is present and
-  max_receive_timestamps_per_ack is not, receive timestamps are not supported
-  and receive_timestamps_exponent MUST be ignored.
+  max_receive_timestamps_per_ack is absent or has a value of 0, receive
+  timestamps are not supported and receive_timestamps_exponent MUST be ignored.
 
 ## Receive Timestamp Basis {#ts-basis}
 
