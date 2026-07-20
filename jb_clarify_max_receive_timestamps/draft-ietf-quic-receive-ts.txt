@@ -293,12 +293,9 @@ Table of Contents
 
       An endpoint MUST NOT send ACK_RECEIVE_TIMESTAMPS or
       PATH_ACK_RECEIVE_TIMESTAMPS frames to a peer whose
-      max_receive_timestamps_per_ack is 0.  This includes the case where
-      the transport parameter is absent and the default value of 0 is
-      assumed, which indicates the peer does not support receive
-      timestamps and the extension is not negotiated for that direction.
-      A value of 0 does not permit sending these frames with zero
-      timestamps; it prohibits sending them entirely.
+      max_receive_timestamps_per_ack is not present or 0.  A value of 0
+      does not permit sending these frames with zero timestamps; it
+      prohibits sending them entirely.
 
    receive_timestamps_exponent (0x4ac26 temporary value for draft
    use):  A variable-length integer indicating the exponent to be used
