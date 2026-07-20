@@ -267,7 +267,8 @@ max_receive_timestamps_per_ack (0x4ac07 temporary value for draft use):
 : A variable-length integer indicating that the maximum number of receive
   timestamps the sending endpoint would like to receive in an
   ACK_RECEIVE_TIMESTAMPS or PATH_ACK_RECEIVE_TIMESTAMPS frame.
-  If this transport parameter is absent, a default value of 0 is assumed.
+  If this transport parameter is absent, this extension is not supported, which
+  is equivalent to a value of 0.
 
   Each ACK_RECEIVE_TIMESTAMPS or PATH_ACK_RECEIVE_TIMESTAMPS frame sent MUST
   NOT contain more than the peer's maximum number of receive timestamps.
