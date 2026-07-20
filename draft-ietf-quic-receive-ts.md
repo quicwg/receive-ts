@@ -299,7 +299,7 @@ the frame more compact.
 
 # Discussion
 
-## Best-Effort Behavior
+## Best-Effort Behavior {#best-effort}
 
 Receive timestamps are sent on a best-effort basis. Endpoints MUST gracefully
 handle scenarios where the receiver does not communicate receive timestamps for
@@ -405,7 +405,27 @@ been reported.
 
 # Security Considerations
 
-TODO Security
+The security properties described in {{Section 21 of !RFC9000}} apply, as this
+extension only defines frames sent in 1-RTT packets, which are authenticated and
+integrity-protected.
+
+As noted in {{Section 8.1 of ?RFC9002}}, congestion control relies on signals
+from unauthenticated entities. Receive timestamps are integrity-protected but
+remain under the peer's control and could be crafted to influence the sender's
+congestion control or bandwidth estimation.
+
+A malicious peer could report incorrect timestamps to cause the sender to
+over- or under-estimate available bandwidth. Implementations that use receive
+timestamps SHOULD perform plausibility checks and bound their impact using
+other signals (loss, ECN, RTT); implausible timestamps MAY be ignored.
+
+Processing and storing timestamps requires additional state. Endpoints SHOULD
+bound the resources dedicated to this extension, advertise a
+max_receive_timestamps_per_ack they are willing to handle, and be prepared to
+truncate or ignore excess timestamps as described in {{best-effort}}. The size
+of ACK_RECEIVE_TIMESTAMPS and PATH_ACK_RECEIVE_TIMESTAMPS frames is bounded by
+the peer's advertised limit and the packet size, limiting amplification as
+discussed in {{Section 21.9 of !RFC9000}}.
 
 
 # IANA Considerations
