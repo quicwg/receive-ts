@@ -325,6 +325,29 @@ acknowledged packets. Examples of such scenarios are:
   implementation, and omits the packet from the Timestamp Ranges while still
   acknowledging it in the ACK Ranges.
 
+## Plausibility Checks {#plausibility}
+
+Receive timestamps are provided by the peer and may be incorrect. A peer could
+report timestamps that advance more slowly or more quickly than real time
+(e.g., 1ms of timestamp advance per 2ms of real time) to influence bandwidth
+estimation.
+
+Endpoints that use receive timestamps for congestion control or bandwidth
+estimation SHOULD perform plausibility checks. An endpoint MAY treat a
+timestamp as implausible and ignore it, handling it as if it were not reported
+(see {{best-effort}}). For example:
+
+- Timestamp too large: If the delta between a receive timestamp and the first
+  observed receive timestamp is significantly larger than the local time elapsed
+  since the first timestamp was observed, the timestamp MAY be considered
+  implausible.
+
+- Timestamp too small: If the delta is significantly smaller than the local time
+  elapsed minus the smoothed RTT, the timestamp MAY be considered implausible.
+
+Thresholds are implementation dependent and should allow for timer granularity
+and path delay variation.
+
 ## Frame Size
 
 The addition of receive timestamps increases the size of ACK frames. Receivers
@@ -424,8 +447,9 @@ congestion control or bandwidth estimation.
 
 A malicious peer could report incorrect timestamps to cause the sender to
 over- or under-estimate available bandwidth. Implementations that use receive
-timestamps SHOULD perform plausibility checks and bound their impact using
-other signals (loss, ECN, RTT); implausible timestamps MAY be ignored.
+timestamps SHOULD perform plausibility checks (see {{plausibility}}) and bound
+their impact using other signals (loss, ECN, RTT); implausible timestamps MAY be
+ignored.
 
 Processing and storing timestamps requires additional state. Endpoints SHOULD
 bound the resources dedicated to this extension, advertise a
