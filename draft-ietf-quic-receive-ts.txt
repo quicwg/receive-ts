@@ -5,8 +5,8 @@
 QUIC                                                       I. Swett, Ed.
 Internet-Draft                                                Google LLC
 Intended status: Standards Track                          J. Beshay, Ed.
-Expires: 21 January 2027                            Meta Platforms, Inc.
-                                                            20 July 2026
+Expires: 28 January 2027                            Meta Platforms, Inc.
+                                                            27 July 2026
 
 
  QUIC Extended Acknowledgement for Reporting Packet Receive Timestamps
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 21 January 2027.
+   This Internet-Draft will expire on 28 January 2027.
 
 Copyright Notice
 
@@ -139,7 +139,7 @@ Table of Contents
      First ACK Range (i),
      ACK Range (..) ...,
      [ECN Counts (..)],       // included iff Type == 0x03178308
-     Receive Timestamps (..)  // see {{ts-ranges}}
+     Receive Timestamps (..)
    }
 
                          Figure 1: ACK Frame Format
@@ -257,7 +257,7 @@ Table of Contents
      First ACK Range (i),
      ACK Range (..) ...,
      [ECN Counts (..)],       // included iff Type == 0x0317830a
-     Receive Timestamps (..)  // see {{ts-ranges}}
+     Receive Timestamps (..)
    }
 
              Figure 4: PATH_ACK_RECEIVE_TIMESTAMPS Frame Format
