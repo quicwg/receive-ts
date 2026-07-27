@@ -113,7 +113,7 @@ ACK_RECEIVE_TIMESTAMPS Frame {
   First ACK Range (i),
   ACK Range (..) ...,
   [ECN Counts (..)],       // included iff Type == 0x03178308
-  Receive Timestamps (..)  // see {{ts-ranges}}
+  Receive Timestamps (..)
 }
 ~~~
 {: #fig-frame title="ACK Frame Format"}
@@ -238,7 +238,7 @@ PATH_ACK_RECEIVE_TIMESTAMPS Frame {
   First ACK Range (i),
   ACK Range (..) ...,
   [ECN Counts (..)],       // included iff Type == 0x0317830a
-  Receive Timestamps (..)  // see {{ts-ranges}}
+  Receive Timestamps (..)
 }
 ~~~
 {: #fig-mp-frame title="PATH_ACK_RECEIVE_TIMESTAMPS Frame Format"}
