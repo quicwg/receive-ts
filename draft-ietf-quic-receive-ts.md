@@ -136,7 +136,8 @@ Receive Timestamps {
 Timestamp Range Count:
 
 : A variable-length integer specifying the number of Timestamp Range fields in
-  the frame.
+  the frame. A value of 0 is permitted, in which case the frame does not report
+  any receive timestamps.
 
 Timestamp Ranges:
 
@@ -183,9 +184,12 @@ Delta Largest Acknowledged:
 Timestamp Delta Count:
 
 : A variable-length integer indicating the number of Timestamp Deltas in the
-  current Timestamp Range.
+  current Timestamp Range minus one. That is, a value of 0 indicates that the
+  Timestamp Range contains a single Timestamp Delta. As a result, every
+  Timestamp Range contains at least one Timestamp Delta.
 
-  The sum of Timestamp Delta Counts for all Timestamp Ranges in the frame MUST
+  The total number of Timestamp Deltas in the frame, i.e. the sum of
+  Timestamp Delta Count plus one for all Timestamp Ranges in the frame, MUST
   NOT exceed max_receive_timestamps_per_ack as specified in {{negotiation}}.
 
 Timestamp Deltas:
@@ -365,12 +369,12 @@ Timestamp Range Count: 2
 
 Timestamp Range 1:
   Delta Largest Acknowledged: 0 // Starting at packet 100
-  Timestamp Delta Count: 5
+  Timestamp Delta Count: 4 // 5 timestamps
   Timestamp Deltas: 380, 10, 10, 5, 5
 
 Timestamp Range 2:
   Delta Largest Acknowledged: 9 // Starting at packet 91
-  Timestamp Delta Count: 5
+  Timestamp Delta Count: 4 // 5 timestamps
   Timestamp Deltas: 20, 10, 10, 5, 5
 ~~~
 
@@ -394,17 +398,17 @@ Timestamp Range Count: 3
 
 Timestamp Range 1:
   Delta Largest Acknowledged: 5 // Starting at packet 95
-  Timestamp Delta Count: 4
+  Timestamp Delta Count: 3 // 4 timestamps
   Timestamp Deltas: 395, 1, 2, 2
 
 Timestamp Range 2:
   Delta Largest Acknowledged: 0 // Starting at packet 100
-  Timestamp Delta Count: 5
+  Timestamp Delta Count: 4 // 5 timestamps
   Timestamp Deltas: 10, 10, 10, 5, 5
 
 Timestamp Range 3:
   Delta Largest Acknowledged: 9 // Starting at packet 91
-  Timestamp Delta Count: 5
+  Timestamp Delta Count: 4 // 5 timestamps
   Timestamp Deltas: 20, 10, 10, 5, 5
 ~~~
 
