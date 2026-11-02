@@ -167,7 +167,7 @@ Timestamp Ranges are structured as shown in {{fig-ts-range}}.
 Timestamp Range {
   Delta Largest Acknowledged (i),
   Timestamp Delta Count (i),
-  Timestamp Delta (i) ...,
+  Timestamp Delta (i) ...,  // Timestamp Delta Count + 1 values
 }
 ~~~
 {: #fig-ts-range title="Timestamp Range Format"}
