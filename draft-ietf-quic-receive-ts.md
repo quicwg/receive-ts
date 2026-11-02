@@ -102,7 +102,9 @@ Similar to to the ACK frame types (x02..0x03), the ACK_RECEIVE_TIMESTAMPS
 frame defines two frame types (0x03178307..0x03178308) to indicate whether the frame
 includes ECN counts.
 ACK frames are never sent in 0-RTT packets, so the same applies to
-ACK_RECEIVE_TIMESTAMPS frames.
+ACK_RECEIVE_TIMESTAMPS frames. Receipt of an ACK_RECEIVE_TIMESTAMPS or
+PATH_ACK_RECEIVE_TIMESTAMPS frame in a packet other than a 1-RTT packet MUST be
+treated as a connection error of type PROTOCOL_VIOLATION.
 
 ~~~
 ACK_RECEIVE_TIMESTAMPS Frame {
@@ -178,7 +180,9 @@ Delta Largest Acknowledged:
 : A variable-length integer indicating the largest packet number in the
   Timestamp Range as a delta to subtract from the Largest Acknowledged in the
   ACK frame. For example, 0 indicates the range starts with the
-  Largest Acknowledged.
+  Largest Acknowledged. If any packet number in a Timestamp Range is negative,
+  the endpoint MUST treat this as a connection error of type
+  FRAME_ENCODING_ERROR.
 
 Timestamp Delta Count:
 
@@ -278,6 +282,9 @@ max_receive_timestamps_per_ack (0x4ac07 temporary value for draft use):
   max_receive_timestamps_per_ack is not present or 0.
   A value of 0 does not permit sending these
   frames with zero timestamps; it prohibits sending them entirely.
+
+  An endpoint that receives a frame violating either of these requirements
+  MUST treat this as a connection error of type PROTOCOL_VIOLATION.
 
 receive_timestamps_exponent (0x4ac26 temporary value for draft use):
 
