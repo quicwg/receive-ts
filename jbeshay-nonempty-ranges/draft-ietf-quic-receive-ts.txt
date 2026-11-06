@@ -5,8 +5,8 @@
 QUIC                                                       I. Swett, Ed.
 Internet-Draft                                                Google LLC
 Intended status: Standards Track                          J. Beshay, Ed.
-Expires: 6 May 2027                                 Meta Platforms, Inc.
-                                                         2 November 2026
+Expires: 10 May 2027                                Meta Platforms, Inc.
+                                                         6 November 2026
 
 
  QUIC Extended Acknowledgement for Reporting Packet Receive Timestamps
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 6 May 2027.
+   This Internet-Draft will expire on 10 May 2027.
 
 Copyright Notice
 
@@ -287,10 +287,10 @@ Table of Contents
 
 6.  Extension Negotiation
 
-   max_receive_timestamps_per_ack (0x4ac07 temporary value for draft
-   use):  A variable-length integer indicating the maximum number of
-      receive timestamps the sending endpoint would like to receive in
-      an ACK_RECEIVE_TIMESTAMPS or PATH_ACK_RECEIVE_TIMESTAMPS frame.
+   max_receive_timestamps_per_ack (0x1fed5311 temporary value for
+   draft use):  A variable-length integer indicating the maximum number
+      of receive timestamps the sending endpoint would like to receive
+      in an ACK_RECEIVE_TIMESTAMPS or PATH_ACK_RECEIVE_TIMESTAMPS frame.
       If this transport parameter is absent, this extension is not
       supported, which is equivalent to a value of 0.
 
@@ -485,7 +485,7 @@ Table of Contents
 10.  IANA Considerations
 
    This document uses temporary values for the transport parameters
-   max_receive_timestamps_per_ack (0x4ac07) and
+   max_receive_timestamps_per_ack (0x1fed5311) and
    receive_timestamps_exponent (0x4ac26), and for the frame types
    ACK_RECEIVE_TIMESTAMPS (0x03178307..0x03178308) and
    PATH_ACK_RECEIVE_TIMESTAMPS (0x03178309..0x0317830a).  Prior to
