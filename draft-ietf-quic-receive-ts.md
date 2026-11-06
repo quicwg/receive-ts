@@ -267,7 +267,7 @@ in {{ts-ranges}}.
 
 # Extension Negotiation {#negotiation}
 
-max_receive_timestamps_per_ack (0x4ac07 temporary value for draft use):
+max_receive_timestamps_per_ack (0x1fed5311 temporary value for draft use):
 
 : A variable-length integer indicating the maximum number of receive
   timestamps the sending endpoint would like to receive in an
@@ -284,7 +284,7 @@ max_receive_timestamps_per_ack (0x4ac07 temporary value for draft use):
   A value of 0 does not permit sending these
   frames with zero timestamps; it prohibits sending them entirely.
 
-receive_timestamps_exponent (0x4ac26 temporary value for draft use):
+receive_timestamps_exponent (0x1fed5312 temporary value for draft use):
 
 : A variable-length integer indicating the exponent to be used when encoding and
   decoding timestamp delta fields in ACK_RECEIVE_TIMESTAMPS and
@@ -444,8 +444,8 @@ discussed in {{Section 21.9 of !RFC9000}}.
 # IANA Considerations
 
 This document uses temporary values for the transport parameters
-max_receive_timestamps_per_ack (0x4ac07) and receive_timestamps_exponent
-(0x4ac26), and for the frame types ACK_RECEIVE_TIMESTAMPS
+max_receive_timestamps_per_ack (0x1fed5311) and receive_timestamps_exponent
+(0x1fed5312), and for the frame types ACK_RECEIVE_TIMESTAMPS
 (0x03178307..0x03178308) and PATH_ACK_RECEIVE_TIMESTAMPS
 (0x03178309..0x0317830a). Prior to publication, these will be replaced with
 permanent registrations in the "QUIC Transport Parameters"
