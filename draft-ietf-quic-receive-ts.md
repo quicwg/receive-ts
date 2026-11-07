@@ -285,10 +285,12 @@ receive_timestamps_exponent (0x4ac26 temporary value for draft use):
   decoding timestamp delta fields in ACK_RECEIVE_TIMESTAMPS and
   PATH_ACK_RECEIVE_TIMESTAMPS frames sent by the
   peer (see {{ts-ranges}}). If this value is absent, a default value of 0 is
-  assumed (indicating microsecond precision). Values above 20 are invalid.
-  If the receive_timestamps_exponent transport parameter is present and
-  max_receive_timestamps_per_ack is absent or has a value of 0, receive
-  timestamps are not supported and receive_timestamps_exponent MUST be ignored.
+  assumed (indicating microsecond precision). Values above 20 are invalid; an
+  endpoint that receives such a value MUST treat this as a connection error of
+  type TRANSPORT_PARAMETER_ERROR. If the receive_timestamps_exponent transport
+  parameter is present and max_receive_timestamps_per_ack is absent or has a
+  value of 0, receive timestamps are not supported and
+  receive_timestamps_exponent MUST be ignored, regardless of its value.
 
 ## Receive Timestamp Basis {#ts-basis}
 
