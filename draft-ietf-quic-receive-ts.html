@@ -11,23 +11,23 @@
        This document defines an extension to the QUIC transport protocol which supports
 reporting multiple packet receive timestamps for post-handshake packets. 
     " name="description">
-<meta content="xml2rfc 3.34.0" name="generator">
+<meta content="xml2rfc 3.35.0" name="generator">
 <meta content="Internet-Draft" name="keyword">
 <meta content="draft-ietf-quic-receive-ts-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.34.0
-    Python 3.14.5
-    ConfigArgParse 1.7.5
+  xml2rfc 3.35.0
+    Python 3.14.10
+    ConfigArgParse 1.9.0
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
     lxml 6.1.1
     natsort 8.4.0
-    platformdirs 4.10.1
+    platformdirs 4.14.3
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.8.2
+    wcwidth 0.9.4
 -->
 <link href="draft-ietf-quic-receive-ts.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -63,7 +63,6 @@ reporting multiple packet receive timestamps for post-handshake packets.
   src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
   unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-
 @font-face {
   font-family: 'Lora';
   font-style: italic;
@@ -112,7 +111,6 @@ reporting multiple packet receive timestamps for post-handshake packets.
   src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
 @font-face {
   font-family: 'Lora';
   font-style: normal;
@@ -177,7 +175,6 @@ reporting multiple packet receive timestamps for post-handshake packets.
   font-display: swap;
   src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
 }
 
 @font-face {
@@ -1031,7 +1028,7 @@ svg {
   & :is([stroke="white"], [stroke^="#fff"]) {
     stroke: var(--background-color);
   }
-  & :is([fill="black"], [fill^="#000"], :not([fill])) {
+  & :is([fill="black"], [fill^="#000"], :not([fill], [fill] *)) {
     fill: var(--text-color);
   }
   & :is([fill="white"], [fill^="#fff"]) {
@@ -1046,11 +1043,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">QUIC Receive Timestamps</td>
-<td class="right">July 2026</td>
+<td class="right">November 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Swett &amp; Beshay</td>
-<td class="center">Expires 28 January 2027</td>
+<td class="center">Expires 11 May 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1063,12 +1060,12 @@ svg {
 <dd class="internet-draft">draft-ietf-quic-receive-ts-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-07-27" class="published">27 July 2026</time>
+<time datetime="2026-11-07" class="published">7 November 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-01-28">28 January 2027</time></dd>
+<dd class="expires"><time datetime="2027-05-11">11 May 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1109,7 +1106,7 @@ reporting multiple packet receive timestamps for post-handshake packets.<a href=
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 28 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 11 May 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1489,10 +1486,12 @@ frames with zero timestamps; it prohibits sending them entirely.<a href="#sectio
 decoding timestamp delta fields in ACK_RECEIVE_TIMESTAMPS and
 PATH_ACK_RECEIVE_TIMESTAMPS frames sent by the
 peer (see <a href="#ts-ranges" class="auto internal xref">Section 4.1</a>). If this value is absent, a default value of 0 is
-assumed (indicating microsecond precision). Values above 20 are invalid.
-If the receive_timestamps_exponent transport parameter is present and
-max_receive_timestamps_per_ack is absent or has a value of 0, receive
-timestamps are not supported and receive_timestamps_exponent <span class="bcp14">MUST</span> be ignored.<a href="#section-6-1.4.1" class="pilcrow">¶</a></p>
+assumed (indicating microsecond precision). Values above 20 are invalid; an
+endpoint that receives such a value <span class="bcp14">MUST</span> treat this as a connection error of
+type TRANSPORT_PARAMETER_ERROR. If the receive_timestamps_exponent transport
+parameter is present and max_receive_timestamps_per_ack is absent or has a
+value of 0, receive timestamps are not supported and
+receive_timestamps_exponent <span class="bcp14">MUST</span> be ignored, regardless of its value.<a href="#section-6-1.4.1" class="pilcrow">¶</a></p>
 </dd>
       <dd class="break"></dd>
 </dl>
