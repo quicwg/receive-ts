@@ -98,7 +98,7 @@ receive timestamps or does not want to report them.
 
 Endpoints send ACK_RECEIVE_TIMESTAMPS frames in 1-RTT packets, with 0
 or more receive timestamps following the Ack Ranges and optional ECN Counts.
-Similar to to the ACK frame types (x02..0x03), the ACK_RECEIVE_TIMESTAMPS
+Similar to the ACK frame types (0x02..0x03), the ACK_RECEIVE_TIMESTAMPS
 frame defines two frame types (0x03178307..0x03178308) to indicate whether the frame
 includes ECN counts.
 ACK frames are never sent in 0-RTT packets, so the same applies to
@@ -116,7 +116,7 @@ ACK_RECEIVE_TIMESTAMPS Frame {
   Receive Timestamps (..)
 }
 ~~~
-{: #fig-frame title="ACK Frame Format"}
+{: #fig-frame title="ACK_RECEIVE_TIMESTAMPS Frame Format"}
 
 The fields Largest Acknowledged, ACK Delay, ACK Range Count, First ACK Range,
 ACK Range and ECN Counts are the same as for ACK (type=0x02..0x03) frames
@@ -195,23 +195,28 @@ Timestamp Deltas:
 
   For the first Timestamp Delta of the first Timestamp Range in the frame: the
   value is the difference between (a) the receive timestamp of the largest
-  packet in the Timestamp Range (indicated by Gap) and (b) the session
-  receive_timestamp_basis (see {{ts-basis}}), decoded as described below.
+  packet in the Timestamp Range (indicated by Delta Largest Acknowledged) and
+  (b) the session receive_timestamp_basis (see {{ts-basis}}), decoded as
+  described below.
 
   For all other Timestamp Deltas: the value is the difference between (a) the
   receive timestamp specified by the previous Timestamp Delta and (b) the
   receive timestamp of the current packet in the Timestamp Range, decoded as
   described below.
 
-  All Timestamp Delta values are decoded by mulitplying the value in the field
+  All Timestamp Delta values are decoded by multiplying the value in the field
   by 2 to the power of the receive_timestamps_exponent transport parameter
-  received by the sender of the frame (see {{negotiation}}):
+  received by the sender of the frame (see {{negotiation}}).
 
 When the receiver receives packets out-of-order, it SHOULD report them with
 other packets in a single ACK_RECEIVE_TIMESTAMPS or PATH_ACK_RECEIVE_TIMESTAMPS
 frame, starting with the most recently received packet regardless of the packet
 number order. See {{examples}} for examples of reporting timestamps of
 out-of-order packets.
+
+When truncation is necessary to fit within the max_receive_timestamps_per_ack
+limit or reduce the size of the frame, the receiver SHOULD retain timestamps
+for the most recently received packets and omit timestamps for older packets.
 
 # PATH_ACK_RECEIVE_TIMESTAMPS Frame Wire Format {#mp-frame}
 
@@ -256,15 +261,11 @@ All other fields are the same as for the ACK_RECEIVE_TIMESTAMPS frame
 ({{frame}}). The Receive Timestamps field follows the same format described
 in {{ts-ranges}}.
 
-When truncation is necessary to fit within the max_receive_timestamps_per_ack
-limit or reduce the size of the frame, the receiver SHOULD retain timestamps
-for the most recently received packets and omit timestamps for older packets.
-
 # Extension Negotiation {#negotiation}
 
 max_receive_timestamps_per_ack (0x4ac07 temporary value for draft use):
 
-: A variable-length integer indicating that the maximum number of receive
+: A variable-length integer indicating the maximum number of receive
   timestamps the sending endpoint would like to receive in an
   ACK_RECEIVE_TIMESTAMPS or PATH_ACK_RECEIVE_TIMESTAMPS frame.
   If this transport parameter is absent, this extension is not supported, which
@@ -362,12 +363,12 @@ ACK frame with two ranges, as follows:
 ~~~
 Largest Acknowledged: 100
 ...
-Timestamp Ranges Count: 2
+Timestamp Range Count: 2
 
 Timestamp Range 1:
   Delta Largest Acknowledged: 0 // Starting at packet 100
   Timestamp Delta Count: 5
-  Timestamps Deltas: 380, 10, 10, 5, 5
+  Timestamp Deltas: 380, 10, 10, 5, 5
 
 Timestamp Range 2:
   Delta Largest Acknowledged: 9 // Starting at packet 91
@@ -391,17 +392,17 @@ as follows:
 ~~~
 Largest Acknowledged: 100
 ...
-Timestamp Ranges Count: 3
+Timestamp Range Count: 3
 
 Timestamp Range 1:
   Delta Largest Acknowledged: 5 // Starting at packet 95
   Timestamp Delta Count: 4
-  Timestamps Deltas: 395, 1, 2, 2
+  Timestamp Deltas: 395, 1, 2, 2
 
 Timestamp Range 2:
   Delta Largest Acknowledged: 0 // Starting at packet 100
   Timestamp Delta Count: 5
-  Timestamps Deltas: 10, 10, 10, 5, 5
+  Timestamp Deltas: 10, 10, 10, 5, 5
 
 Timestamp Range 3:
   Delta Largest Acknowledged: 9 // Starting at packet 91
