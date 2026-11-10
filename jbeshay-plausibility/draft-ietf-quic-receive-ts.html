@@ -1518,7 +1518,9 @@ values can exceed the range of a 64-bit integer. Endpoints <span class="bcp14">M
 to cause arithmetic overflow, and <span class="bcp14">MAY</span> ignore timestamps they cannot represent.
 An endpoint <span class="bcp14">MUST NOT</span> send a Timestamp Delta whose decoded value exceeds 2^62-1
 microseconds, so that any valid timestamp can be represented as a signed 64-bit
-count of microseconds.<a href="#section-6.1-4" class="pilcrow">¶</a></p>
+count of microseconds. An endpoint that receives a Timestamp Delta whose decoded
+value exceeds this limit <span class="bcp14">MUST</span> treat this as a connection error of type
+FRAME_ENCODING_ERROR.<a href="#section-6.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
