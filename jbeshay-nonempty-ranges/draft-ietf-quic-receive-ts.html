@@ -1047,7 +1047,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Swett &amp; Beshay</td>
-<td class="center">Expires 10 May 2027</td>
+<td class="center">Expires 14 May 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1060,12 +1060,12 @@ svg {
 <dd class="internet-draft">draft-ietf-quic-receive-ts-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-11-06" class="published">6 November 2026</time>
+<time datetime="2026-11-10" class="published">10 November 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-05-10">10 May 2027</time></dd>
+<dd class="expires"><time datetime="2027-05-14">14 May 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1106,7 +1106,7 @@ reporting multiple packet receive timestamps for post-handshake packets.<a href=
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 10 May 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 14 May 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1171,6 +1171,9 @@ reporting multiple packet receive timestamps for post-handshake packets.<a href=
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
                 <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-frame-size" class="internal xref">Frame Size</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
+                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-validating-receive-timestam" class="internal xref">Validating Receive Timestamps</a></p>
 </li>
             </ul>
 </li>
@@ -1272,7 +1275,9 @@ Similar to the ACK frame types (0x02..0x03), the ACK_RECEIVE_TIMESTAMPS
 frame defines two frame types (0x03178307..0x03178308) to indicate whether the frame
 includes ECN counts.
 ACK frames are never sent in 0-RTT packets, so the same applies to
-ACK_RECEIVE_TIMESTAMPS frames.<a href="#section-4-2" class="pilcrow">¶</a></p>
+ACK_RECEIVE_TIMESTAMPS frames. Receipt of an ACK_RECEIVE_TIMESTAMPS or
+PATH_ACK_RECEIVE_TIMESTAMPS frame in a packet other than a 1-RTT packet <span class="bcp14">MUST</span> be
+treated as a connection error of type PROTOCOL_VIOLATION.<a href="#section-4-2" class="pilcrow">¶</a></p>
 <span id="name-ack_receive_timestamps-fram"></span><div id="fig-frame">
 <figure id="figure-1">
         <div class="alignLeft art-text artwork" id="section-4-3.1">
@@ -1351,8 +1356,8 @@ or PATH_ACK_RECEIVE_TIMESTAMPS frame.<a href="#section-4.1-2" class="pilcrow">¶
 <pre>
 Timestamp Range {
   Delta Largest Acknowledged (i),
-  Timestamp Delta Count (i),
-  Timestamp Delta (i) ...,  // Timestamp Delta Count + 1 values
+  Additional Timestamp Delta Count (i),
+  Timestamp Delta (i) ...,  // (Additional Timestamp Delta Count + 1) times
 }
 </pre>
 </div>
@@ -1367,35 +1372,37 @@ Timestamp Range {
             <p id="section-4.1-6.2.1">A variable-length integer indicating the largest packet number in the
 Timestamp Range as a delta to subtract from the Largest Acknowledged in the
 ACK frame. For example, 0 indicates the range starts with the
-Largest Acknowledged.<a href="#section-4.1-6.2.1" class="pilcrow">¶</a></p>
+Largest Acknowledged. If any packet number in a Timestamp Range is negative,
+the endpoint <span class="bcp14">MUST</span> treat this as a connection error of type
+FRAME_ENCODING_ERROR.<a href="#section-4.1-6.2.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
-<dt id="section-4.1-6.3">Timestamp Delta Count:</dt>
+<dt id="section-4.1-6.3">Additional Timestamp Delta Count:</dt>
           <dd style="margin-left: 1.5em" id="section-4.1-6.4">
-            <p id="section-4.1-6.4.1">A variable-length integer indicating the number of Timestamp Deltas in the
-current Timestamp Range minus one. That is, a value of 0 indicates that the
-Timestamp Range contains a single Timestamp Delta. As a result, every
-Timestamp Range contains at least one Timestamp Delta.<a href="#section-4.1-6.4.1" class="pilcrow">¶</a></p>
+            <p id="section-4.1-6.4.1">A variable-length integer indicating the number of Timestamp Deltas that
+follow the first Timestamp Delta in the current Timestamp Range. Every
+Timestamp Range contains at least one Timestamp Delta: the first reports the
+receive timestamp of the packet indicated by Delta Largest Acknowledged, and
+each additional Timestamp Delta reports the receive timestamp of the next
+smaller packet number.<a href="#section-4.1-6.4.1" class="pilcrow">¶</a></p>
 <p id="section-4.1-6.4.2">The total number of Timestamp Deltas in the frame, i.e. the sum of
-Timestamp Delta Count plus one for all Timestamp Ranges in the frame, <span class="bcp14">MUST NOT</span> exceed max_receive_timestamps_per_ack as specified in <a href="#negotiation" class="auto internal xref">Section 6</a>.<a href="#section-4.1-6.4.2" class="pilcrow">¶</a></p>
+Additional Timestamp Delta Count plus one for all Timestamp Ranges in the
+frame, <span class="bcp14">MUST NOT</span> exceed max_receive_timestamps_per_ack as specified in
+<a href="#negotiation" class="auto internal xref">Section 6</a>.<a href="#section-4.1-6.4.2" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-4.1-6.5">Timestamp Deltas:</dt>
           <dd style="margin-left: 1.5em" id="section-4.1-6.6">
-            <p id="section-4.1-6.6.1">Variable-length integers encoding the receive timestamp for contiguous packets
-in the Timestamp Range in descending packet number order as follows:<a href="#section-4.1-6.6.1" class="pilcrow">¶</a></p>
-<p id="section-4.1-6.6.2">For the first Timestamp Delta of the first Timestamp Range in the frame: the
-value is the difference between (a) the receive timestamp of the largest
-packet in the Timestamp Range (indicated by Delta Largest Acknowledged) and
-(b) the session receive_timestamp_basis (see <a href="#ts-basis" class="auto internal xref">Section 6.1</a>), decoded as
-described below.<a href="#section-4.1-6.6.2" class="pilcrow">¶</a></p>
-<p id="section-4.1-6.6.3">For all other Timestamp Deltas: the value is the difference between (a) the
-receive timestamp specified by the previous Timestamp Delta and (b) the
-receive timestamp of the current packet in the Timestamp Range, decoded as
-described below.<a href="#section-4.1-6.6.3" class="pilcrow">¶</a></p>
-<p id="section-4.1-6.6.4">All Timestamp Delta values are decoded by multiplying the value in the field
-by 2 to the power of the receive_timestamps_exponent transport parameter
-received by the sender of the frame (see <a href="#negotiation" class="auto internal xref">Section 6</a>).<a href="#section-4.1-6.6.4" class="pilcrow">¶</a></p>
+            <p id="section-4.1-6.6.1">Variable-length integers that encode the receive timestamps of the packets in
+the Timestamp Range, in descending packet number order. Each value is decoded
+by multiplying it by 2 to the power of the receive_timestamps_exponent
+transport parameter received by the sender of the frame (see <a href="#negotiation" class="auto internal xref">Section 6</a>).<a href="#section-4.1-6.6.1" class="pilcrow">¶</a></p>
+<p id="section-4.1-6.6.2">Taken in order across all Timestamp Ranges in the frame, the reported receive
+timestamps never increase. The first Timestamp Delta in the frame is the
+receive timestamp of its packet relative to receive_timestamp_basis (see
+<a href="#ts-basis" class="auto internal xref">Section 6.1</a>). Each subsequent Timestamp Delta, whether in the same or a later
+Timestamp Range, is the time by which its packet was received before the
+packet of the previous Timestamp Delta.<a href="#section-4.1-6.6.2" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -1483,6 +1490,8 @@ PATH_ACK_RECEIVE_TIMESTAMPS frames to a peer whose
 max_receive_timestamps_per_ack is not present or 0.
 A value of 0 does not permit sending these
 frames with zero timestamps; it prohibits sending them entirely.<a href="#section-6-1.2.3" class="pilcrow">¶</a></p>
+<p id="section-6-1.2.4">An endpoint that receives a frame violating either of these requirements
+<span class="bcp14">MUST</span> treat this as a connection error of type PROTOCOL_VIOLATION.<a href="#section-6-1.2.4" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-6-1.3">receive_timestamps_exponent (0x1fed5312 temporary value for draft use):</dt>
@@ -1491,10 +1500,12 @@ frames with zero timestamps; it prohibits sending them entirely.<a href="#sectio
 decoding timestamp delta fields in ACK_RECEIVE_TIMESTAMPS and
 PATH_ACK_RECEIVE_TIMESTAMPS frames sent by the
 peer (see <a href="#ts-ranges" class="auto internal xref">Section 4.1</a>). If this value is absent, a default value of 0 is
-assumed (indicating microsecond precision). Values above 20 are invalid.
-If the receive_timestamps_exponent transport parameter is present and
-max_receive_timestamps_per_ack is absent or has a value of 0, receive
-timestamps are not supported and receive_timestamps_exponent <span class="bcp14">MUST</span> be ignored.<a href="#section-6-1.4.1" class="pilcrow">¶</a></p>
+assumed (indicating microsecond precision). Values above 20 are invalid; an
+endpoint that receives such a value <span class="bcp14">MUST</span> treat this as a connection error of
+type TRANSPORT_PARAMETER_ERROR. If the receive_timestamps_exponent transport
+parameter is present and max_receive_timestamps_per_ack is absent or has a
+value of 0, receive timestamps are not supported and
+receive_timestamps_exponent <span class="bcp14">MUST</span> be ignored, regardless of its value.<a href="#section-6-1.4.1" class="pilcrow">¶</a></p>
 </dd>
       <dd class="break"></dd>
 </dl>
@@ -1513,6 +1524,16 @@ to the peer.<a href="#section-6.1-2" class="pilcrow">¶</a></p>
 <p id="section-6.1-3">Receive timestamps are reported relative to the basis, rather than in absolute
 time to avoid requiring clock synchronization between endpoints and to make
 the frame more compact.<a href="#section-6.1-3" class="pilcrow">¶</a></p>
+<p id="section-6.1-4">Endpoints <span class="bcp14">SHOULD</span> choose a receive_timestamp_basis close to the start of the
+connection to keep reported values small. Because the basis remains constant,
+reported timestamps still grow over the lifetime of the connection, and decoded
+values can exceed the range of a 64-bit integer. Endpoints <span class="bcp14">MUST NOT</span> allow this
+to cause arithmetic overflow, and <span class="bcp14">MAY</span> ignore timestamps they cannot represent.
+An endpoint <span class="bcp14">MUST NOT</span> send a Timestamp Delta whose decoded value exceeds 2^62-1
+microseconds, so that any valid timestamp can be represented as a signed 64-bit
+count of microseconds. An endpoint that receives a Timestamp Delta whose decoded
+value exceeds this limit <span class="bcp14">MUST</span> treat this as a connection error of type
+FRAME_ENCODING_ERROR.<a href="#section-6.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1559,6 +1580,39 @@ acknowledging it in the ACK Ranges.<a href="#section-7.1-2.3.1" class="pilcrow">
 already be sent, rather than sending additional packets solely to report
 timestamps. In such cases, the receiver would send fewer timestamps than the
 maximum allowed by max_receive_timestamps_per_ack.<a href="#section-7.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="plausibility">
+<section id="section-7.3">
+        <h3 id="name-validating-receive-timestam">
+<a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-validating-receive-timestam" class="section-name selfRef">Validating Receive Timestamps</a>
+        </h3>
+<p id="section-7.3-1">A sender can use its own send and acknowledgement times to check whether the
+receive timestamps reported by its peer are plausible. A packet is always
+received after it was sent and before the sender receives the first
+acknowledgement for it. Therefore, for two packets A and B, where B was
+received after A, the time between their reported receive timestamps:<a href="#section-7.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-7.3-2.1">
+            <p id="section-7.3-2.1.1">cannot be greater than the time from when the sender sent A to when it first
+received an acknowledgement for B; and<a href="#section-7.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-7.3-2.2">
+            <p id="section-7.3-2.2.1">cannot be less than the time from when the sender first received an
+acknowledgement for A to when it sent B.<a href="#section-7.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-7.3-3">Timestamps that fail this check are implausible. For example, if a peer reports
+timestamps that advance faster or slower than real time, this check fails once
+the two packets are more than about one round-trip time apart.<a href="#section-7.3-3" class="pilcrow">¶</a></p>
+<p id="section-7.3-4">When applying this check, senders need to allow for the precision of the
+reported timestamps, the granularity of their own clock, and small differences
+in clock rate between the endpoints. The effect of clock rate differences grows
+over time, so the check works best on packets sent close together.<a href="#section-7.3-4" class="pilcrow">¶</a></p>
+<p id="section-7.3-5">Passing this check does not guarantee that timestamps are accurate, since a peer
+can still report any values within these bounds. Estimates derived from receive
+timestamps, such as available bandwidth, need to remain consistent with what the
+sender observes locally, such as its delivery rate.<a href="#section-7.3-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1633,12 +1687,12 @@ Timestamp Range Count: 2
 
 Timestamp Range 1:
   Delta Largest Acknowledged: 0 // Starting at packet 100
-  Timestamp Delta Count: 4 // 5 timestamps
+  Additional Timestamp Delta Count: 4 // 5 timestamps
   Timestamp Deltas: 380, 10, 10, 5, 5
 
 Timestamp Range 2:
   Delta Largest Acknowledged: 9 // Starting at packet 91
-  Timestamp Delta Count: 4 // 5 timestamps
+  Additional Timestamp Delta Count: 4 // 5 timestamps
   Timestamp Deltas: 20, 10, 10, 5, 5
 </pre><a href="#section-8-5" class="pilcrow">¶</a>
 </div>
@@ -1681,17 +1735,17 @@ Timestamp Range Count: 3
 
 Timestamp Range 1:
   Delta Largest Acknowledged: 5 // Starting at packet 95
-  Timestamp Delta Count: 3 // 4 timestamps
+  Additional Timestamp Delta Count: 3 // 4 timestamps
   Timestamp Deltas: 395, 1, 2, 2
 
 Timestamp Range 2:
   Delta Largest Acknowledged: 0 // Starting at packet 100
-  Timestamp Delta Count: 4 // 5 timestamps
+  Additional Timestamp Delta Count: 4 // 5 timestamps
   Timestamp Deltas: 10, 10, 10, 5, 5
 
 Timestamp Range 3:
   Delta Largest Acknowledged: 9 // Starting at packet 91
-  Timestamp Delta Count: 4 // 5 timestamps
+  Additional Timestamp Delta Count: 4 // 5 timestamps
   Timestamp Deltas: 20, 10, 10, 5, 5
 </pre><a href="#section-8-9" class="pilcrow">¶</a>
 </div>
@@ -1714,8 +1768,9 @@ remain under the peer's control and could be crafted to influence the sender's
 congestion control or bandwidth estimation.<a href="#section-9-2" class="pilcrow">¶</a></p>
 <p id="section-9-3">A malicious peer could report incorrect timestamps to cause the sender to
 over- or under-estimate available bandwidth. Implementations that use receive
-timestamps <span class="bcp14">SHOULD</span> perform plausibility checks and bound their impact using
-other signals (loss, ECN, RTT); implausible timestamps <span class="bcp14">MAY</span> be ignored.<a href="#section-9-3" class="pilcrow">¶</a></p>
+timestamps <span class="bcp14">SHOULD</span> perform plausibility checks, such as those described in
+<a href="#plausibility" class="auto internal xref">Section 7.3</a> to ignore implausible timestamps, and can reduce the
+impact of ignoring them by using other signals (loss, ECN, RTT).<a href="#section-9-3" class="pilcrow">¶</a></p>
 <p id="section-9-4">Processing and storing timestamps requires additional state. Endpoints <span class="bcp14">SHOULD</span>
 bound the resources dedicated to this extension, advertise a
 max_receive_timestamps_per_ack they are willing to handle, and be prepared to
