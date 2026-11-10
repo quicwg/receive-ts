@@ -462,8 +462,8 @@ congestion control or bandwidth estimation.
 A malicious peer could report incorrect timestamps to cause the sender to
 over- or under-estimate available bandwidth. Implementations that use receive
 timestamps SHOULD perform plausibility checks, such as those described in
-{{plausibility}}, and bound their impact using other signals (loss, ECN, RTT);
-implausible timestamps MAY be ignored.
+{{plausibility}} to ignore implausible timestamps, and can reduce the
+impact of ignoring them by using other signals (loss, ECN, RTT).
 
 Processing and storing timestamps requires additional state. Endpoints SHOULD
 bound the resources dedicated to this extension, advertise a
