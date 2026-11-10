@@ -168,8 +168,8 @@ Timestamp Ranges are structured as shown in {{fig-ts-range}}.
 ~~~
 Timestamp Range {
   Delta Largest Acknowledged (i),
-  Timestamp Delta Count (i),
-  Timestamp Delta (i) ...,  // Timestamp Delta Count + 1 values
+  Additional Timestamp Delta Count (i),
+  Timestamp Delta (i) ...,  // (Additional Timestamp Delta Count + 1) times
 }
 ~~~
 {: #fig-ts-range title="Timestamp Range Format"}
@@ -185,36 +185,33 @@ Delta Largest Acknowledged:
   the endpoint MUST treat this as a connection error of type
   FRAME_ENCODING_ERROR.
 
-Timestamp Delta Count:
+Additional Timestamp Delta Count:
 
-: A variable-length integer indicating the number of Timestamp Deltas in the
-  current Timestamp Range minus one. That is, a value of 0 indicates that the
-  Timestamp Range contains a single Timestamp Delta. As a result, every
-  Timestamp Range contains at least one Timestamp Delta.
+: A variable-length integer indicating the number of Timestamp Deltas that
+  follow the first Timestamp Delta in the current Timestamp Range. Every
+  Timestamp Range contains at least one Timestamp Delta: the first reports the
+  receive timestamp of the packet indicated by Delta Largest Acknowledged, and
+  each additional Timestamp Delta reports the receive timestamp of the next
+  smaller packet number.
 
   The total number of Timestamp Deltas in the frame, i.e. the sum of
-  Timestamp Delta Count plus one for all Timestamp Ranges in the frame, MUST
-  NOT exceed max_receive_timestamps_per_ack as specified in {{negotiation}}.
+  Additional Timestamp Delta Count plus one for all Timestamp Ranges in the
+  frame, MUST NOT exceed max_receive_timestamps_per_ack as specified in
+  {{negotiation}}.
 
 Timestamp Deltas:
 
-: Variable-length integers encoding the receive timestamp for contiguous packets
-  in the Timestamp Range in descending packet number order as follows:
+: Variable-length integers that encode the receive timestamps of the packets in
+  the Timestamp Range, in descending packet number order. Each value is decoded
+  by multiplying it by 2 to the power of the receive_timestamps_exponent
+  transport parameter received by the sender of the frame (see {{negotiation}}).
 
-  For the first Timestamp Delta of the first Timestamp Range in the frame: the
-  value is the difference between (a) the receive timestamp of the largest
-  packet in the Timestamp Range (indicated by Delta Largest Acknowledged) and
-  (b) the session receive_timestamp_basis (see {{ts-basis}}), decoded as
-  described below.
-
-  For all other Timestamp Deltas: the value is the difference between (a) the
-  receive timestamp specified by the previous Timestamp Delta and (b) the
-  receive timestamp of the current packet in the Timestamp Range, decoded as
-  described below.
-
-  All Timestamp Delta values are decoded by multiplying the value in the field
-  by 2 to the power of the receive_timestamps_exponent transport parameter
-  received by the sender of the frame (see {{negotiation}}).
+  Taken in order across all Timestamp Ranges in the frame, the reported receive
+  timestamps never increase. The first Timestamp Delta in the frame is the
+  receive timestamp of its packet relative to receive_timestamp_basis (see
+  {{ts-basis}}). Each subsequent Timestamp Delta, whether in the same or a later
+  Timestamp Range, is the time by which its packet was received before the
+  packet of the previous Timestamp Delta.
 
 When the receiver receives packets out-of-order, it SHOULD report them with
 other packets in a single ACK_RECEIVE_TIMESTAMPS or PATH_ACK_RECEIVE_TIMESTAMPS
@@ -417,12 +414,12 @@ Timestamp Range Count: 2
 
 Timestamp Range 1:
   Delta Largest Acknowledged: 0 // Starting at packet 100
-  Timestamp Delta Count: 4 // 5 timestamps
+  Additional Timestamp Delta Count: 4 // 5 timestamps
   Timestamp Deltas: 380, 10, 10, 5, 5
 
 Timestamp Range 2:
   Delta Largest Acknowledged: 9 // Starting at packet 91
-  Timestamp Delta Count: 4 // 5 timestamps
+  Additional Timestamp Delta Count: 4 // 5 timestamps
   Timestamp Deltas: 20, 10, 10, 5, 5
 ~~~
 
@@ -446,17 +443,17 @@ Timestamp Range Count: 3
 
 Timestamp Range 1:
   Delta Largest Acknowledged: 5 // Starting at packet 95
-  Timestamp Delta Count: 3 // 4 timestamps
+  Additional Timestamp Delta Count: 3 // 4 timestamps
   Timestamp Deltas: 395, 1, 2, 2
 
 Timestamp Range 2:
   Delta Largest Acknowledged: 0 // Starting at packet 100
-  Timestamp Delta Count: 4 // 5 timestamps
+  Additional Timestamp Delta Count: 4 // 5 timestamps
   Timestamp Deltas: 10, 10, 10, 5, 5
 
 Timestamp Range 3:
   Delta Largest Acknowledged: 9 // Starting at packet 91
-  Timestamp Delta Count: 4 // 5 timestamps
+  Additional Timestamp Delta Count: 4 // 5 timestamps
   Timestamp Deltas: 20, 10, 10, 5, 5
 ~~~
 
