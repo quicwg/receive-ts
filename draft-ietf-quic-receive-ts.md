@@ -312,7 +312,9 @@ values can exceed the range of a 64-bit integer. Endpoints MUST NOT allow this
 to cause arithmetic overflow, and MAY ignore timestamps they cannot represent.
 An endpoint MUST NOT send a Timestamp Delta whose decoded value exceeds 2^62-1
 microseconds, so that any valid timestamp can be represented as a signed 64-bit
-count of microseconds.
+count of microseconds. An endpoint that receives a Timestamp Delta whose decoded
+value exceeds this limit MUST treat this as a connection error of type
+FRAME_ENCODING_ERROR.
 
 # Discussion
 
