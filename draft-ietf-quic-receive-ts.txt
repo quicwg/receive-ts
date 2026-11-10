@@ -62,6 +62,7 @@ Table of Contents
    7.  Discussion
      7.1.  Best-Effort Behavior
      7.2.  Frame Size
+     7.3.  Validating Receive Timestamps
    8.  Examples
    9.  Security Considerations
    10. IANA Considerations
@@ -336,6 +337,18 @@ Table of Contents
    absolute time to avoid requiring clock synchronization between
    endpoints and to make the frame more compact.
 
+   Endpoints SHOULD choose a receive_timestamp_basis close to the start
+   of the connection to keep reported values small.  Because the basis
+   remains constant, reported timestamps still grow over the lifetime of
+   the connection, and decoded values can exceed the range of a 64-bit
+   integer.  Endpoints MUST NOT allow this to cause arithmetic overflow,
+   and MAY ignore timestamps they cannot represent.  An endpoint MUST
+   NOT send a Timestamp Delta whose decoded value exceeds 2^62-1
+   microseconds, so that any valid timestamp can be represented as a
+   signed 64-bit count of microseconds.  An endpoint that receives a
+   Timestamp Delta whose decoded value exceeds this limit MUST treat
+   this as a connection error of type FRAME_ENCODING_ERROR.
+
 7.  Discussion
 
 7.1.  Best-Effort Behavior
@@ -366,6 +379,38 @@ Table of Contents
    packets solely to report timestamps.  In such cases, the receiver
    would send fewer timestamps than the maximum allowed by
    max_receive_timestamps_per_ack.
+
+7.3.  Validating Receive Timestamps
+
+   A sender can use its own send and acknowledgement times to check
+   whether the receive timestamps reported by its peer are plausible.  A
+   packet is always received after it was sent and before the sender
+   receives the first acknowledgement for it.  Therefore, for two
+   packets A and B, where B was received after A, the time between their
+   reported receive timestamps:
+
+   *  cannot be greater than the time from when the sender sent A to
+      when it first received an acknowledgement for B; and
+
+   *  cannot be less than the time from when the sender first received
+      an acknowledgement for A to when it sent B.
+
+   Timestamps that fail this check are implausible.  For example, if a
+   peer reports timestamps that advance faster or slower than real time,
+   this check fails once the two packets are more than about one round-
+   trip time apart.
+
+   When applying this check, senders need to allow for the precision of
+   the reported timestamps, the granularity of their own clock, and
+   small differences in clock rate between the endpoints.  The effect of
+   clock rate differences grows over time, so the check works best on
+   packets sent close together.
+
+   Passing this check does not guarantee that timestamps are accurate,
+   since a peer can still report any values within these bounds.
+   Estimates derived from receive timestamps, such as available
+   bandwidth, need to remain consistent with what the sender observes
+   locally, such as its delivery rate.
 
 8.  Examples
 
@@ -476,8 +521,9 @@ Table of Contents
    A malicious peer could report incorrect timestamps to cause the
    sender to over- or under-estimate available bandwidth.
    Implementations that use receive timestamps SHOULD perform
-   plausibility checks and bound their impact using other signals (loss,
-   ECN, RTT); implausible timestamps MAY be ignored.
+   plausibility checks, such as those described in Section 7.3 to ignore
+   implausible timestamps, and can reduce the impact of ignoring them by
+   using other signals (loss, ECN, RTT).
 
    Processing and storing timestamps requires additional state.
    Endpoints SHOULD bound the resources dedicated to this extension,
