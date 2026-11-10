@@ -5,8 +5,8 @@
 QUIC                                                       I. Swett, Ed.
 Internet-Draft                                                Google LLC
 Intended status: Standards Track                          J. Beshay, Ed.
-Expires: 10 May 2027                                Meta Platforms, Inc.
-                                                         6 November 2026
+Expires: 14 May 2027                                Meta Platforms, Inc.
+                                                        10 November 2026
 
 
  QUIC Extended Acknowledgement for Reporting Packet Receive Timestamps
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 10 May 2027.
+   This Internet-Draft will expire on 14 May 2027.
 
 Copyright Notice
 
@@ -506,9 +506,9 @@ Table of Contents
    A malicious peer could report incorrect timestamps to cause the
    sender to over- or under-estimate available bandwidth.
    Implementations that use receive timestamps SHOULD perform
-   plausibility checks, such as those described in Section 7.3, and
-   bound their impact using other signals (loss, ECN, RTT); implausible
-   timestamps MAY be ignored.
+   plausibility checks, such as those described in Section 7.3 to ignore
+   implausible timestamps, and can reduce the impact of ignoring them by
+   using other signals (loss, ECN, RTT).
 
    Processing and storing timestamps requires additional state.
    Endpoints SHOULD bound the resources dedicated to this extension,
